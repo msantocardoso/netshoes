@@ -7,7 +7,7 @@
 *.jar
 *.war
 *.ear
-
+/log
 # virtual machine crash logs
 hs_err_pid*
 /target
