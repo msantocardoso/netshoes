@@ -1,4 +1,4 @@
-package br.com.netshoes.endereco;
+package br.com.netshoes.resource;
 
 import javax.ws.rs.core.MediaType;
 
@@ -16,7 +16,7 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 
-public class CepServiceTest {
+public class EnderecoResourceTest {
 
 	private static final String MAPPING_FEATURE_JSON = "com.sun.jersey.api.json.POJOMappingFeature";
 	private static ServerManager server;
