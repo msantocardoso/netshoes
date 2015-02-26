@@ -54,9 +54,9 @@ public class EnderecoResourceTest {
 	}
 
 	@Test
-	public void deveRecuperarEnderecoComIdentificador1() {
+	public void deveRetornarLogradouroAvenidaNoveDeJulhoPorCep() {
 
-		String lJSON = webResource.path("/enderecos/01313000").accept(MediaType.APPLICATION_JSON).get(String.class);
+		String lJSON = webResource.path("/enderecos/01313001").accept(MediaType.APPLICATION_JSON).get(String.class);
 
 		Endereco lEndereco = new Gson().fromJson(lJSON, Endereco.class);
 
@@ -64,7 +64,7 @@ public class EnderecoResourceTest {
 
 		Assert.assertEquals(1, lEndereco.getCodigo());
 		Assert.assertEquals("Bela Vista", lEndereco.getBairro());
-		Assert.assertEquals("01313000", lEndereco.getCep());
+		Assert.assertEquals("01313001", lEndereco.getCep());
 		Assert.assertEquals("Avenida Nove de Julho", lEndereco.getLogradouro());
 	}
 }
