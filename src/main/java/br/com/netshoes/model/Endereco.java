@@ -1,20 +1,26 @@
 package br.com.netshoes.model;
 
-import com.google.gson.Gson;
 
 
 public class Endereco {
 
-	private long codigo;
-	private String logradouro;
-	private String bairro;
 	private String cep;
+	private String rua;
+	private String bairro;
+	private String cidade;
+	private String estado;
 
-	public String getLogradouro() {
-		return logradouro;
+	public String getCep() {
+		return cep;
 	}
-	public void setLogradouro(String logradouro) {
-		this.logradouro = logradouro;
+	public void setCep(String cep) {
+		this.cep = cep;
+	}
+	public String getRua() {
+		return rua;
+	}
+	public void setRua(String rua) {
+		this.rua = rua;
 	}
 	public String getBairro() {
 		return bairro;
@@ -22,21 +28,16 @@ public class Endereco {
 	public void setBairro(String bairro) {
 		this.bairro = bairro;
 	}
-	public String getCep() {
-		return cep;
+	public String getCidade() {
+		return cidade;
 	}
-	public void setCep(String cep) {
-		this.cep = cep;
+	public void setCidade(String cidade) {
+		this.cidade = cidade;
 	}
-
-	@Override
-	public String toString() {
-		return new Gson().toJson(this);
+	public String getEstado() {
+		return estado;
 	}
-	public long getCodigo() {
-		return codigo;
-	}
-	public void setCodigo(long codigo) {
-		this.codigo = codigo;
+	public void setEstado(String estado) {
+		this.estado = estado;
 	}
 }
