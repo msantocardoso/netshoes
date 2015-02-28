@@ -1,4 +1,4 @@
-package br.com.netshoes.resource;
+package br.com.netshoes.resources;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -9,7 +9,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import br.com.netshoes.exception.CepInvalidoException;
+import br.com.netshoes.infrastructure.exception.CepInvalidoException;
 import br.com.netshoes.model.Endereco;
 import br.com.netshoes.service.EnderecoService;
 

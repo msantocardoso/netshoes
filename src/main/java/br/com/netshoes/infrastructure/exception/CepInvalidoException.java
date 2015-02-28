@@ -1,4 +1,4 @@
-package br.com.netshoes.exception;
+package br.com.netshoes.infrastructure.exception;
 
 public class CepInvalidoException extends Exception {
 

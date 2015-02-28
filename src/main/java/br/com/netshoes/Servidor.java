@@ -1,4 +1,4 @@
-package br.com.netshoes.server;
+package br.com.netshoes;
 
 import java.io.IOException;
 
@@ -9,9 +9,9 @@ import org.glassfish.grizzly.servlet.ServletRegistration;
 import org.glassfish.grizzly.servlet.WebappContext;
 
 
-public class ServerManager {
+public class Servidor {
 
-	private final Logger LOGGER = Logger.getLogger(ServerManager.class);
+	private final Logger LOGGER = Logger.getLogger(Servidor.class);
 
 	private HttpServer server;
 

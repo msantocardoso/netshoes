@@ -2,45 +2,39 @@ package br.com.netshoes.service;
 
 import org.apache.log4j.Logger;
 
-import br.com.netshoes.exception.CepInvalidoException;
-import br.com.netshoes.exception.NenhumRegistroEncontradoException;
+import br.com.netshoes.infrastructure.ModificadorCep;
+import br.com.netshoes.infrastructure.exception.CepInvalidoException;
+import br.com.netshoes.infrastructure.exception.NenhumRegistroEncontrado;
 import br.com.netshoes.model.Endereco;
 import br.com.netshoes.repository.EnderecoRepository;
-import br.com.netshoes.util.CepTransform;
 
 public class EnderecoService {
-
-	private static final String MSG_CEP_INVALIDO = "Cep inv\u00e1lido!";
 	private final Logger LOGGER = Logger.getLogger(EnderecoService.class);
+
+	private final String MSG_CEP_INVALIDO = "Cep inv\u00e1lido!";
+
 	private final EnderecoRepository enderecoRepository = new EnderecoRepository();
 
 	public Endereco buscaPorCep(String cep) throws CepInvalidoException {
 		this.validar(cep);
 
-		Endereco lEndereco = this.busca(cep);
-
-		return lEndereco;
-	}
-
-	private Endereco busca(String cep) {
 		Endereco lEndereco = null;
+		ModificadorCep lModificador = new ModificadorCep(cep);
 
-		CepTransform lTransform = new CepTransform(cep);
-
-		String lCEP = cep;
+		String lCEP = null;
 		int lTentativa = 1;
 		do {
-			try {
-				lCEP = lTransform.getCep();
-				LOGGER.info("Tentativa #"+(lTentativa++) + " - Buscando endereço relacionado ao CEP: [" + lCEP + "]...");
+			lCEP = lModificador.getCep();
 
-				lEndereco = enderecoRepository.findByCep(lCEP);
+			LOGGER.info("Tentativa #"+(lTentativa++) + " - Buscando endereço relacionado ao CEP: [" + lCEP + "]...");
+			try {
+				lEndereco = enderecoRepository.buscaPorCep(lCEP);
 				if(lEndereco!=null)
 					break;
-			} catch (NenhumRegistroEncontradoException lNaoEncontrado) {
-				LOGGER.info("Nenhum endereço relacionado ao CEP: [" + lCEP + "]...");
+			} catch (NenhumRegistroEncontrado lNaoEncontrado) {
+				LOGGER.info("Nenhum endereço relacionado ao CEP: [" + cep + "]...");
 			}
-		} while (lTransform.hasNext());
+		} while (lModificador.temProximo());
 
 		return lEndereco;
 	}

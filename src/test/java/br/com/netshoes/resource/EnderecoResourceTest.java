@@ -10,23 +10,19 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import br.com.netshoes.Servidor;
+import br.com.netshoes.infrastructure.ClientAdapter;
+import br.com.netshoes.infrastructure.JerseyClientAdapter;
+import br.com.netshoes.infrastructure.exception.JerseyClientException;
 import br.com.netshoes.model.Endereco;
-import br.com.netshoes.server.ServerManager;
-
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.UniformInterfaceException;
-import com.sun.jersey.api.client.WebResource;
 
 public class EnderecoResourceTest {
 
 	private static final String CEP_INVALIDO = "Cep inválido!";
 
-	private static final String NETSHOES_TEST_CONTEXT = "http://localhost:8080/netshoes-test";
+	private static final Servidor server = new Servidor();
 
-	private static final ServerManager server = new ServerManager();
-
-	private static final Client CLIENT = Client.create();
-	private static final WebResource webResource = CLIENT.resource(NETSHOES_TEST_CONTEXT);
+	private ClientAdapter<Endereco> clientAdapter = new JerseyClientAdapter<Endereco>("http://localhost:8080/netshoes-test", MediaType.APPLICATION_JSON, Endereco.class);
 
 	@BeforeClass
 	public static void setUpBeforeClass() {
@@ -40,7 +36,19 @@ public class EnderecoResourceTest {
 	@AfterClass
 	public static void tearDownAfterClass() {
 		server.stop();
-		CLIENT.destroy();
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> T requestResource(String pCEP) {
+		T lResponse = null;
+		try {
+			lResponse = (T) clientAdapter.get(pCEP);
+		} catch (JerseyClientException lClientException) {
+			assertEquals(CEP_INVALIDO, lClientException.getResponse().getEntity());
+			assertEquals(Status.BAD_REQUEST.getStatusCode(), lClientException.getResponse().getStatus());
+		}
+
+		return lResponse;
 	}
 
 	@Test
@@ -48,7 +56,7 @@ public class EnderecoResourceTest {
 
 		final String lCEP = "01313001";
 
-		Endereco lEndereco = webResource.path("/enderecos/"+lCEP).accept(MediaType.APPLICATION_JSON).get(Endereco.class);
+		Endereco lEndereco = this.requestResource("/enderecos/" + lCEP);
 
 		assertNotNull("Endereço nulo!", lEndereco);
 
@@ -62,7 +70,7 @@ public class EnderecoResourceTest {
 	@Test
 	public void deveSimularCepValidoDiversasBuscasDeEndereco() {
 
-		Endereco lEndereco = webResource.path("/enderecos/11013006").accept(MediaType.APPLICATION_JSON).get(Endereco.class);
+		Endereco lEndereco = this.requestResource("/enderecos/11013006");
 
 		assertNotNull("Endereço nulo!", lEndereco);
 
@@ -76,7 +84,7 @@ public class EnderecoResourceTest {
 	@Test
 	public void deveSimularVariasTentativasDeBuscaDeEndereco() {
 
-		Endereco lEndereco = webResource.path("/enderecos/12345678").accept(MediaType.APPLICATION_JSON).get(Endereco.class);
+		Endereco lEndereco = this.requestResource("/enderecos/12345678");
 
 		assertNotNull("Endereço nulo!", lEndereco);
 
@@ -87,60 +95,35 @@ public class EnderecoResourceTest {
 		assertEquals("SP", lEndereco.getEstado());
 	}
 
-	@Test(expected=UniformInterfaceException.class)
+	@Test(expected = JerseyClientException.class)
 	public void deveLancarExceptionAoPassarUmaSequenciaDeZeros() {
-		webResource.path("/enderecos/00000000").accept(MediaType.APPLICATION_JSON).get(Endereco.class);
+		clientAdapter.get("/enderecos/00000000");
 	}
 
 	@Test
 	public void deveRetornarStatusCodeBadRequestEMsgCepInvalidoAoPassarUmaSequenciaDeZeros() {
-		try {
-			webResource.path("/enderecos/00000000").accept(MediaType.APPLICATION_JSON).get(Endereco.class);
-		} catch (UniformInterfaceException lUniformInterface) {
-			assertEquals(CEP_INVALIDO, lUniformInterface.getResponse().getEntity(String.class));
-			assertEquals(Status.BAD_REQUEST.getStatusCode(), lUniformInterface.getResponse().getStatus());
-		}
+		this.requestResource("/enderecos/00000000");
 	}
 
 	@Test
 	public void deveStatusCodeBadRequestEMsgCepInvalidoAoUtilizarCepInvalidoComZeros() {
-		try {
-			webResource.path("/enderecos/00000-000").accept(MediaType.APPLICATION_JSON).get(Endereco.class);
-		} catch (UniformInterfaceException lUniformInterface) {
-			assertEquals(CEP_INVALIDO, lUniformInterface.getResponse().getEntity(String.class));
-			assertEquals(Status.BAD_REQUEST.getStatusCode(), lUniformInterface.getResponse().getStatus());
-		}
+		this.requestResource("/enderecos/00000-000");
 	}
 
 	@Test
 	public void deveStatusCodeBadRequestEMsgCepInvalidoAoPassarCepComMenosDeOitoCaracteres() {
-		try {
-			webResource.path("/enderecos/12345").accept(MediaType.APPLICATION_JSON).get(Endereco.class);
-		} catch (UniformInterfaceException lUniformInterface) {
-			assertEquals(CEP_INVALIDO, lUniformInterface.getResponse().getEntity(String.class));
-			assertEquals(Status.BAD_REQUEST.getStatusCode(), lUniformInterface.getResponse().getStatus());
-		}
+		this.requestResource("/enderecos/12345");
 	}
 
 	@Test
 	public void deveStatusCodeBadRequestEMsgCepInvalidoAoPassarCaracteresEspeciaisNoCep() {
 
-		try {
-			webResource.path("/enderecos/1#@$%&* ").accept(MediaType.APPLICATION_JSON).get(Endereco.class);
-		} catch (UniformInterfaceException lUniformInterface) {
-			assertEquals(CEP_INVALIDO, lUniformInterface.getResponse().getEntity(String.class));
-			assertEquals(Status.BAD_REQUEST.getStatusCode(), lUniformInterface.getResponse().getStatus());
-		}
+		this.requestResource("/enderecos/1#@$%&* ");
 	}
 
 	@Test
 	public void deveStatusCodeBadRequestEMsgCepInvalidoAoPassarCepComMaisDeOitoCaracteres() {
 
-		try {
-			webResource.path("/enderecos/0123456789").accept(MediaType.APPLICATION_JSON).get(Endereco.class);
-		} catch (UniformInterfaceException lUniformInterface) {
-			assertEquals(CEP_INVALIDO, lUniformInterface.getResponse().getEntity(String.class));
-			assertEquals(Status.BAD_REQUEST.getStatusCode(), lUniformInterface.getResponse().getStatus());
-		}
+		this.requestResource("/enderecos/0123456789");
 	}
 }

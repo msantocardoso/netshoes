@@ -1,6 +1,6 @@
-#Descrição da Solução 
+#Descrição da Solução
 
-Por se tratar de um serviço que estará exposto na web para ser consumido por aplicações mobile. O mesmo será desenvolvido seguindos os princípios *RestFull*. O serviço REST roda em cima do protocolo HTTP e possibilita a recuperação de recursos(entidades) do sistema através de URLs. No serviço de busca de endereço por CEP faremos uso do método GET (do protocolo HTTP) como regra na solicitação da representação de um determinado recurso. A principal motivação para utilização dessa abordagem é a facilidade e simplicidade na criação e disponibilização de serviços.
+Considerando que o serviço proposto será exposto na web e consumido por aplicações mobile. O mesmo será desenvolvido seguindo os princípios *RestFull*. O serviço REST roda em cima do protocolo HTTP e possibilita a recuperação de recursos(entidades) do sistema através de URLs. Para recuperar endereço por CEP faremos uso do método GET (do protocolo HTTP) como regra para solicitar representação deste recurso do servidor. A principal motivação para utilização dessa abordagem é a facilidade e simplicidade na criação e disponibilização de serviços.
 
 #Arquitetura
 
@@ -8,15 +8,15 @@ Por se tratar de um serviço que estará exposto na web para ser consumido por a
 	- Grizzly: framework servidor HTTP, utilizado para infraestrutura para testes dos serviços
 	- Junit4: framework utilizado na implementação dos testes unitários
 	- Log4J: framework registro de logs de execução
-	- Jersey: implementação da especificação JAX-RS (JSR-311) para criação de serviços REST  
+	- Jersey: implementação da especificação JAX-RS (JSR-311) para criação de serviços REST
 
 #Instruções para validação
 
-Basta executar o teste existente no diretório "src/test/java/**/resource/EnderecoResourceTest.java". 
+Basta executar o teste existente no diretório "src/test/java/**/resource/EnderecoResourceTest.java".
 
 O teste foi programado para iniciar o servidor Grizzly (localhost:8080), criar o contexto da aplicação "/netshoes-test", o endereço de busca do recurso desejado, nesse caso o "endereço" está definido no path "/enderecos" seguido do CEP "/{cep}".
 
-> A consulta é feita de forma bem simples. A requisição GET (método HTTP utilizado na recuperação de recursos) é disparada para a URL: http://localhost:8080/netshoes-test/enderecos/{cep_a_consultar}, onde o *{cep_a_consultar}* é substituido pelo número do CEP utilizado na busca do endereço, devendo obrigatóriamente seguir as seguintes regras de formatação (xxxxxxxx ou xxxxx-xxx, onde "xxx" representam valores numéricos). O resultado será entregue no formato JSON. 
+> A consulta é feita de forma bem simples. A requisição GET (método HTTP utilizado na recuperação de recursos) é disparada para a URL: http://localhost:8080/netshoes-test/enderecos/{cep_a_consultar}, onde o *{cep_a_consultar}* é substituido pelo número do CEP utilizado na busca do endereço, devendo obrigatóriamente seguir as seguintes regras de formatação (xxxxxxxx ou xxxxx-xxx, onde "xxx" representam valores numéricos). O resultado será entregue no formato JSON.
 
 A validação das respostas geradas pelo serviço serão validadas utilizando os *Asserts* do *junit* visando garantir que estão compatíveis com o resultado esperado em cada um dos cenários de teste implementados:
 
@@ -31,9 +31,9 @@ Foram implementados os seguintes cenários de teste:
 	public void deveRetornarLogradouroAvenidaNoveDeJulhoPorCep();
 ```
 
-> * Dispara requisição GET para o servidor passando o CEP (válido) "11013006", porém este não possui endereço relacionado. O serviço deverá aplicar as regras descritas do critérios de aceitação deste cenário e retornar o endereço relacionado ao CEP "11013000". 
+> * Dispara requisição GET para o servidor passando o CEP (válido) "11013006", porém este não possui endereço relacionado. O serviço deverá aplicar as regras descritas do critérios de aceitação deste cenário e retornar o endereço relacionado ao CEP "11013000".
 	- URL de solicitação -> GET : <http://localhost:8080/netshoes-test/enderecos/11013006>
-	
+
 ```
 	@Test
 	public void deveSimularCepValidoDiversasBuscasDeEndereco();
@@ -86,4 +86,4 @@ Foram implementados os seguintes cenários de teste:
 ```
 	@Test
 	public void deveStatusCodeBadRequestEMsgCepInvalidoAoPassarCepComMaisDeOitoCaracteres();
-```	
+```

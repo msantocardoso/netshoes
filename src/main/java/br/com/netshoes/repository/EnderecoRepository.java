@@ -8,25 +8,22 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 
-import br.com.netshoes.exception.CepInvalidoException;
-import br.com.netshoes.exception.NenhumRegistroEncontradoException;
+import br.com.netshoes.infrastructure.ClientAdapter;
+import br.com.netshoes.infrastructure.JerseyClientAdapter;
+import br.com.netshoes.infrastructure.exception.CepInvalidoException;
+import br.com.netshoes.infrastructure.exception.JerseyClientException;
+import br.com.netshoes.infrastructure.exception.NenhumRegistroEncontrado;
 import br.com.netshoes.model.Endereco;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.UniformInterfaceException;
-import com.sun.jersey.api.client.WebResource;
 
 public class EnderecoRepository {
 
 	private final Logger LOGGER = Logger.getLogger(EnderecoRepository.class);
 
-	private static final String API_POSTMON_CEP = "http://api.postmon.com.br/v1/cep";
-
-	private final Client client = Client.create();
-	private final WebResource webResource = client.resource(API_POSTMON_CEP);
+	private ClientAdapter<String> clientAdapter = new JerseyClientAdapter<String>("http://api.postmon.com.br/v1/cep", MediaType.APPLICATION_JSON, String.class);
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -37,22 +34,22 @@ public class EnderecoRepository {
 	 * @return endereço preenchido
 	 * @throws CepInvalidoException
 	 */
-	public Endereco findByCep(String cep) {
+	public Endereco buscaPorCep(String cep) {
 
 		Endereco lEndereco = null;
 		String lResult = "";
 		try {
 
-			lResult = webResource.path(cep).accept(MediaType.APPLICATION_JSON).get(String.class);
+			lResult = clientAdapter.get(cep);
 
 			LOGGER.info("Endereço encontrado: " + lResult);
 
 			lEndereco = this.getEndereco(lResult);
-		} catch (UniformInterfaceException lUniformInterface) {
-			if(lUniformInterface.getResponse().getStatus() == Status.NOT_FOUND.getStatusCode())
-				throw new NenhumRegistroEncontradoException();
+		} catch (JerseyClientException lClientException) {
+			if (lClientException.getResponse().getStatus() == Status.NOT_FOUND.getStatusCode())
+				throw new NenhumRegistroEncontrado();
 
-			throw lUniformInterface;
+			throw lClientException;
 		}
 
 		return lEndereco;

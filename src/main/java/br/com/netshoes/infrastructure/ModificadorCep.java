@@ -1,9 +1,9 @@
-package br.com.netshoes.util;
+package br.com.netshoes.infrastructure;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CepTransform {
+public class ModificadorCep {
 
 	private int indice;
 
@@ -11,9 +11,9 @@ public class CepTransform {
 
 	private StringBuilder cep;
 
-	private final List<String> transformacoes = new ArrayList<String>(8);
+	private final List<String> modificacoes = new ArrayList<String>(8);
 
-	public CepTransform(String cep) {
+	public ModificadorCep(String cep) {
 		this.base = cep;
 		this.cep = new StringBuilder(cep);
 		this.indice = cep.length();
@@ -38,7 +38,7 @@ public class CepTransform {
 
 		modificarCaracter();
 
-		this.transformacoes.add(this.cep.toString());
+		this.modificacoes.add(this.cep.toString());
 	}
 
 	private void modificarCaracter() {
@@ -57,15 +57,15 @@ public class CepTransform {
 		return (this.indice >= 0 && this.indice < cep.length());
 	}
 
-	public List<String> getTransformacoes() {
-		return this.transformacoes;
+	public List<String> getModificacoes() {
+		return this.modificacoes;
 	}
 
 	private void proximoIndice() {
 		indice--;
 	}
 
-	public boolean hasNext() {
+	public boolean temProximo() {
 		return (indice > 0);
 	}
 
