@@ -3,60 +3,21 @@ package br.com.netshoes.resource;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response.Status;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import br.com.netshoes.Servidor;
-import br.com.netshoes.infrastructure.ClientAdapter;
-import br.com.netshoes.infrastructure.JerseyClientAdapter;
 import br.com.netshoes.infrastructure.exception.JerseyClientException;
 import br.com.netshoes.model.Endereco;
 
-public class EnderecoResourceTest {
+public class EnderecoResourceTest extends AbstracaoEnderecoResourceTest {
 
-	private static final String CEP_INVALIDO = "Cep inválido!";
-
-	private static final Servidor server = new Servidor();
-
-	private ClientAdapter<Endereco> clientAdapter = new JerseyClientAdapter<Endereco>("http://localhost:8080/netshoes-test", MediaType.APPLICATION_JSON, Endereco.class);
-
-	@BeforeClass
-	public static void setUpBeforeClass() {
-		createServerManager();
-	}
-
-	static void createServerManager() {
-		server.start();
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() {
-		server.stop();
-	}
-
-	@SuppressWarnings("unchecked")
-	private <T> T requestResource(String pCEP) {
-		T lResponse = null;
-		try {
-			lResponse = (T) clientAdapter.get(pCEP);
-		} catch (JerseyClientException lClientException) {
-			assertEquals(CEP_INVALIDO, lClientException.getResponse().getEntity());
-			assertEquals(Status.BAD_REQUEST.getStatusCode(), lClientException.getResponse().getStatus());
-		}
-
-		return lResponse;
-	}
+	private static final String PATH_ENDERECOS = "/enderecos/";
 
 	@Test
 	public void deveRetornarLogradouroAvenidaNoveDeJulhoPorCep() {
 
 		final String lCEP = "01313001";
 
-		Endereco lEndereco = this.requestResource("/enderecos/" + lCEP);
+		Endereco lEndereco = this.getResource(PATH_ENDERECOS + lCEP);
 
 		assertNotNull("Endereço nulo!", lEndereco);
 
@@ -70,7 +31,7 @@ public class EnderecoResourceTest {
 	@Test
 	public void deveSimularCepValidoDiversasBuscasDeEndereco() {
 
-		Endereco lEndereco = this.requestResource("/enderecos/11013006");
+		Endereco lEndereco = this.getResource(PATH_ENDERECOS + "11013006");
 
 		assertNotNull("Endereço nulo!", lEndereco);
 
@@ -84,7 +45,7 @@ public class EnderecoResourceTest {
 	@Test
 	public void deveSimularVariasTentativasDeBuscaDeEndereco() {
 
-		Endereco lEndereco = this.requestResource("/enderecos/12345678");
+		Endereco lEndereco = this.getResource(PATH_ENDERECOS + "12345678");
 
 		assertNotNull("Endereço nulo!", lEndereco);
 
@@ -97,33 +58,33 @@ public class EnderecoResourceTest {
 
 	@Test(expected = JerseyClientException.class)
 	public void deveLancarExceptionAoPassarUmaSequenciaDeZeros() {
-		clientAdapter.get("/enderecos/00000000");
+		clientAdapter.get(PATH_ENDERECOS + "00000000");
 	}
 
 	@Test
 	public void deveRetornarStatusCodeBadRequestEMsgCepInvalidoAoPassarUmaSequenciaDeZeros() {
-		this.requestResource("/enderecos/00000000");
+		this.getResource(PATH_ENDERECOS + "00000000");
 	}
 
 	@Test
 	public void deveStatusCodeBadRequestEMsgCepInvalidoAoUtilizarCepInvalidoComZeros() {
-		this.requestResource("/enderecos/00000-000");
+		this.getResource(PATH_ENDERECOS + "00000-000");
 	}
 
 	@Test
 	public void deveStatusCodeBadRequestEMsgCepInvalidoAoPassarCepComMenosDeOitoCaracteres() {
-		this.requestResource("/enderecos/12345");
+		this.getResource(PATH_ENDERECOS + "12345");
 	}
 
 	@Test
 	public void deveStatusCodeBadRequestEMsgCepInvalidoAoPassarCaracteresEspeciaisNoCep() {
 
-		this.requestResource("/enderecos/1#@$%&* ");
+		this.getResource(PATH_ENDERECOS + "1#@$%&* ");
 	}
 
 	@Test
 	public void deveStatusCodeBadRequestEMsgCepInvalidoAoPassarCepComMaisDeOitoCaracteres() {
 
-		this.requestResource("/enderecos/0123456789");
+		this.getResource(PATH_ENDERECOS + "0123456789");
 	}
 }

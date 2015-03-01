@@ -10,20 +10,28 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import br.com.netshoes.infrastructure.exception.CepInvalidoException;
+import br.com.netshoes.infrastructure.exception.RepositoryException;
 import br.com.netshoes.model.Endereco;
+import br.com.netshoes.repository.services.WebServiceEnderecoExterno;
 import br.com.netshoes.service.EnderecoService;
+import br.com.netshoes.service.EnderecoServiceImpl;
 
 @Path("enderecos")
 public class EnderecoResource {
 
-	private final EnderecoService enderecoService = new EnderecoService();
+	private EnderecoService enderecoService = new EnderecoServiceImpl();
 
 	@GET
 	@Path("{cep}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Endereco buscaPorCep(@PathParam("cep") String cep) throws CepInvalidoException {
 
-		Endereco lEndereco = enderecoService.buscaPorCep(cep);
+		Endereco lEndereco = null;
+		try {
+			lEndereco = enderecoService.buscarPorCep(cep, new WebServiceEnderecoExterno());
+
+		} catch (RepositoryException lRepExc) {
+		}
 
 		if(lEndereco == null) {
 			throw new WebApplicationException(Response.status(Status.NOT_FOUND).entity("Nenhum endereço encontrado!").type("text/plain").build());
