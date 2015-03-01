@@ -10,9 +10,41 @@
 
 Considerando que o serviço proposto será exposto na web e consumido por aplicações mobile. O mesmo será desenvolvido seguindo os princípios *RestFull*. O serviço REST roda em cima do protocolo HTTP e possibilita a recuperação de recursos(entidades) do sistema através de URLs. Para recuperar endereço por CEP faremos uso do método GET (do protocolo HTTP) como regra para solicitar representação deste recurso do servidor. A principal motivação para utilização dessa abordagem é a facilidade e simplicidade na criação e disponibilização de serviços.
 
---------------------------------------
+src/main/java
 
-Basta executar o teste existente no diretório "src/test/java/**/resource/EnderecoResourceTest.java".
+--------------------------------------
+br.com.netshoes
+- Servidor.java - reponsavel pela inicialização do servidor
+
+br.com.netshoes.model
+- Endereco.java - modelo de dominio
+
+br.com.netshoes.infrastructure
+- ClientAdapter.java - Interface do serviço do jersey
+- JerseyClientAdapter.java - abstrai os padrões de comunicação com serviços rest
+- ModificadorCep.java - Aplica das regras que modificação do cerp
+
+br.com.netshoes.infrastructure.exception
+- CepInvalidoException.java
+- EnderecoInvalidoException.java
+- JerseyClientException.java
+- NenhumRegistroEncontrado.java
+- RepositoryException.java
+
+- br.com.netshoes.infrastructure.exception.mapper
+- CepInvalidoMapper.java - mapeamento de exceptions
+- JerseyClientExceptionMapper.java - mapeamento de exceptions
+
+br.com.netshoes.repository.services
+- WebServiceEndereco.java - Interface de acesso ao serviço de busca de endereco
+- WebServiceEnderecoExterno.java - Reponsável por acessar o serviço externo de busca de endereco
+- WebServiceEnderecoNetshoes.java - Reponsável por acessar o serviço desenvolvido nessa história
+
+br.com.netshoes.resources
+- EnderecoResource.java - Servico de busca de endereco cep
+
+
+asta executar o teste existente no diretório "src/test/java/**/resource/EnderecoResourceTest.java".
 
 O teste foi programado para iniciar o servidor Grizzly (localhost:8080), criar o contexto da aplicação "/netshoes-test", o endereço de busca do recurso desejado, nesse caso o "endereço" está definido no path "/enderecos" seguido do CEP "/{cep}".
 
@@ -94,6 +126,17 @@ CRUD do endereço (INCLUIR, CONSULTAR, ATUALIZAR, DELETAR)
 
 Basta executar o teste existente no diretório "src/test/java/**/repository/EnderecoServiceTest.java".
 
+src/main/java
+
+br.com.netshoes.service
+- EnderecoService.java - interface de definição do metodos de manipulação do endereco
+- EnderecoServiceImpl.java - implementação
+
+br.com.netshoes.repository
+- EnderecoRepository.java - interface de definição do metodos de manipulação do endereco
+- EnderecoRepositoryImpl.java - Implementação do crud
+
+
 > * Executa as operações de inserção, atualização, remoção e consulta do objeto endereço.
 ```
 	@Test
@@ -170,9 +213,35 @@ Basta executar o teste existente no diretório "src/test/java/**/repository/Ende
 
 Basta executar o teste existente no diretório "src/test/java/**/stream/StreamTest.java"
 
+src/main/java
+
+br.com.netshoes.stream
+- Stream.java - Interface pré-definida
+- StreamImpl.java - Implementação da regra para encontrar primeiro digito que não se repete em um campo texto.
+
+src/test/java
+
+br.com.netshoes.stream
+- StreamTest.java - classe de teste dos stream
+
+A seguir a descrição dos testes
+
+> *Retorna 'b' como primeiro caracter que não se repete
+```
+	@Test
+	public void deveRetornarbComoCaracterQueNaoSeRepete();
+```
+> * Retorna 'z' como primeiro caracter que não se repete
+```
+	@Test
+	public void deveRetornarzComoCaracterQueNaoSeRepete();
+```
+> * Lança NotFounException, quando não houver nenhum registro
+```
+	@Test(expected=NotFoundException.class)
+	public void deveLancarNotFoundException();
+```
+
 #Resposta - Questão 4
 
 O navegador fará uma requisição para o servidor, no cabecalho da solicitação será adicionando diversas informações como identificação do solicitante "User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US)...", método HTTP "GET"/ versão do protocolo "HTTP/1.1", tipo de dado esperado "Accept: text/xml,application/xml,application/xhtml", dentre outros... O servidor recebará a solicitção, realiza o processamento e devolve o resultado para o solicitante. Ao receber a resposta o navegador iniciará solicitação e carregamento dos recursos estáticos e processamento da página. Para cada recurso estático o dispositivo fará uma nova solicitação ao servidor, que o entregará o recurso solicitado e o navegador irá processar esses recursos e o finalizar disponibilizar a pagina ao usuário.
-
-
-
