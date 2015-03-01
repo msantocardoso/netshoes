@@ -36,7 +36,7 @@ public class Servidor {
 
 			this.server.start();
 		} catch (IOException lIOExc) {
-			LOGGER.error("Inicializando servidor...", lIOExc);
+			LOGGER.error("Erro durante a inicialização do servidor...", lIOExc);
 			throw new RuntimeException("Falha ao inicializar o servidor.");
 		}
 	}
