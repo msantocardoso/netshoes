@@ -1,6 +1,7 @@
 #Arquitetura
 
 	- Java SE 7
+	- Maven: gestão das dependências
 	- Grizzly: framework servidor HTTP, utilizado para infraestrutura para testes dos serviços
 	- Junit4: framework utilizado na implementação dos testes unitários
 	- Log4J: framework registro de logs de execução
@@ -10,6 +11,8 @@
 #Instruções para validação - História 1
 
 Considerando que o serviço proposto será exposto na web e consumido por aplicações mobile. O mesmo será desenvolvido seguindo os princípios *RestFull*. O serviço REST roda em cima do protocolo HTTP e possibilita a recuperação de recursos(entidades) do sistema através de URLs. Para recuperar endereço por CEP faremos uso do método GET (do protocolo HTTP) como regra para solicitar representação deste recurso do servidor. A principal motivação para utilização dessa abordagem é a facilidade e simplicidade na criação e disponibilização de serviços.
+
+Visão geral da implementação:
 
 **src/main/java**
 
@@ -25,8 +28,6 @@ br.com.netshoes.infrastructure
 - ClientAdapter.java - interface do adaptador do serviço do jersey
 - JerseyClientAdapter.java - encapsula os detalhes de utilização do cliente http jersey
 - ModificadorCep.java - aplica as regras de modificação de caracteres da string cep
-
-*mapeamento de exceptions*
 
 br.com.netshoes.infrastructure.exception
 - CepInvalidoException.java
@@ -56,7 +57,7 @@ br.com.netshoes.resource
 - AbstracaoEnderecoResourceTest.java - abstrai a configuração da infraestrutura necessária para execução dos testes
 - EnderecoResourceTest.java - valida os cenários de teste descritos nos requisitos
 
-Basta executar o teste existente no diretório "src/test/java/**/resource/EnderecoResourceTest.java".
+-----------------------------
 
 O teste foi programado para iniciar o servidor Grizzly (localhost:8080), criar o contexto da aplicação "/netshoes-test", o endereço de busca do recurso desejado, nesse caso o "endereço" está definido no path "/enderecos" seguido do CEP "/{cep}".
 
@@ -65,6 +66,8 @@ O teste foi programado para iniciar o servidor Grizzly (localhost:8080), criar o
 A validação das respostas geradas pelo serviço serão validadas utilizando os *Asserts* do *junit* visando garantir que estão compatíveis com o resultado esperado em cada um dos cenários de teste implementados.
 
 -----------------------------
+
+Execute a classe de teste existente no diretório "src/test/java/**/resource/EnderecoResourceTest.java"
 
 Foram implementados os seguintes cenários de teste:
 
@@ -135,7 +138,7 @@ Foram implementados os seguintes cenários de teste:
 
 CRUD do endereço (INCLUIR, CONSULTAR, ATUALIZAR, DELETAR)
 
-Basta executar o teste existente no diretório "src/test/java/**/repository/EnderecoServiceTest.java".
+Visão geral da implementação:
 
 **src/main/java**
 
@@ -156,6 +159,12 @@ br.com.netshoes.repository
 br.com.netshoes.repository
 - AbstracaoRepositorioTest.java - abstrai a configuração da infraestrutura necessária para execução dos testes
 - EnderecoServiceTest.java - validação dos cenários de teste descritos no requisitos
+
+---------------
+
+Execute a classe de teste existente no diretório "src/test/java/**/repository/EnderecoServiceTest.java".
+
+A seguir a descrição dos testes implementados:
 
 > * Executa as operações de inserção, atualização, remoção e consulta do objeto endereço.
 ```
@@ -233,7 +242,7 @@ br.com.netshoes.repository
 
 Algoritmo de busca do primeiro caracterer que não se repete em uma string
 
-Basta executar o teste existente no diretório "src/test/java/**/stream/StreamTest.java"
+Visão geral da implementação:
 
 **src/main/java**
 
@@ -249,6 +258,10 @@ br.com.netshoes.stream
 
 br.com.netshoes.stream
 - StreamTest.java - classe de teste dos stream
+
+---------------
+
+Execute a classe de teste no diretório "src/test/java/**/stream/StreamTest.java"
 
 A seguir a descrição dos testes implementados:
 
