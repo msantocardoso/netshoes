@@ -1,28 +1,32 @@
 #Arquitetura
 
-	- Java SE 8
+	- Java SE 7
 	- Grizzly: framework servidor HTTP, utilizado para infraestrutura para testes dos serviços
 	- Junit4: framework utilizado na implementação dos testes unitários
 	- Log4J: framework registro de logs de execução
 	- Jersey: implementação da especificação JAX-RS (JSR-311) para criação de serviços REST
+	- hsqldb: banco de dados, persistencia em modo memória utilizado na execução do CRUD
 
 #Instruções para validação - História 1
 
 Considerando que o serviço proposto será exposto na web e consumido por aplicações mobile. O mesmo será desenvolvido seguindo os princípios *RestFull*. O serviço REST roda em cima do protocolo HTTP e possibilita a recuperação de recursos(entidades) do sistema através de URLs. Para recuperar endereço por CEP faremos uso do método GET (do protocolo HTTP) como regra para solicitar representação deste recurso do servidor. A principal motivação para utilização dessa abordagem é a facilidade e simplicidade na criação e disponibilização de serviços.
 
-src/main/java
+**src/main/java**
 
---------------------------------------
+---------------
+
 br.com.netshoes
-- Servidor.java - reponsavel pela inicialização do servidor
+- Servidor.java - encapsula os detalhes de inicialização do servidor http
 
 br.com.netshoes.model
-- Endereco.java - modelo de dominio
+- Endereco.java - representação do endereço
 
 br.com.netshoes.infrastructure
-- ClientAdapter.java - Interface do serviço do jersey
-- JerseyClientAdapter.java - abstrai os padrões de comunicação com serviços rest
-- ModificadorCep.java - Aplica das regras que modificação do cerp
+- ClientAdapter.java - interface do adaptador do serviço do jersey
+- JerseyClientAdapter.java - encapsula os detalhes de utilização do cliente http jersey
+- ModificadorCep.java - aplica as regras de modificação de caracteres da string cep
+
+*mapeamento de exceptions*
 
 br.com.netshoes.infrastructure.exception
 - CepInvalidoException.java
@@ -32,7 +36,7 @@ br.com.netshoes.infrastructure.exception
 - RepositoryException.java
 
 - br.com.netshoes.infrastructure.exception.mapper
-- CepInvalidoMapper.java - mapeamento de exceptions
+- CepInvalidoMapper.java
 - JerseyClientExceptionMapper.java - mapeamento de exceptions
 
 br.com.netshoes.repository.services
@@ -43,8 +47,16 @@ br.com.netshoes.repository.services
 br.com.netshoes.resources
 - EnderecoResource.java - Servico de busca de endereco cep
 
+**src/test/java**
 
-asta executar o teste existente no diretório "src/test/java/**/resource/EnderecoResourceTest.java".
+---------------
+
+br.com.netshoes.resource
+
+- AbstracaoEnderecoResourceTest.java - abstrai a configuração da infraestrutura necessária para execução dos testes
+- EnderecoResourceTest.java - valida os cenários de teste descritos nos requisitos
+
+Basta executar o teste existente no diretório "src/test/java/**/resource/EnderecoResourceTest.java".
 
 O teste foi programado para iniciar o servidor Grizzly (localhost:8080), criar o contexto da aplicação "/netshoes-test", o endereço de busca do recurso desejado, nesse caso o "endereço" está definido no path "/enderecos" seguido do CEP "/{cep}".
 
@@ -119,14 +131,15 @@ Foram implementados os seguintes cenários de teste:
 	public void deveStatusCodeBadRequestEMsgCepInvalidoAoPassarCepComMaisDeOitoCaracteres();
 ```
 
-
 #Instruções para validação - História 2
 
 CRUD do endereço (INCLUIR, CONSULTAR, ATUALIZAR, DELETAR)
 
 Basta executar o teste existente no diretório "src/test/java/**/repository/EnderecoServiceTest.java".
 
-src/main/java
+**src/main/java**
+
+---------------
 
 br.com.netshoes.service
 - EnderecoService.java - interface de definição do metodos de manipulação do endereco
@@ -136,6 +149,13 @@ br.com.netshoes.repository
 - EnderecoRepository.java - interface de definição do metodos de manipulação do endereco
 - EnderecoRepositoryImpl.java - Implementação do crud
 
+**src/test/java**
+
+---------------
+
+br.com.netshoes.repository
+- AbstracaoRepositorioTest.java - abstrai a configuração da infraestrutura necessária para execução dos testes
+- EnderecoServiceTest.java - validação dos cenários de teste descritos no requisitos
 
 > * Executa as operações de inserção, atualização, remoção e consulta do objeto endereço.
 ```
@@ -211,20 +231,26 @@ br.com.netshoes.repository
 
 #Resposta - Questão 3
 
+Algoritmo de busca do primeiro caracterer que não se repete em uma string
+
 Basta executar o teste existente no diretório "src/test/java/**/stream/StreamTest.java"
 
-src/main/java
+**src/main/java**
+
+---------------
 
 br.com.netshoes.stream
-- Stream.java - Interface pré-definida
-- StreamImpl.java - Implementação da regra para encontrar primeiro digito que não se repete em um campo texto.
+- Stream.java - Interface pré-definida na descrição da questão
+- StreamImpl.java - Implementação da regra de identificação do primeiro digito que não se repete em um texto.
 
-src/test/java
+**src/test/java**
+
+---------------
 
 br.com.netshoes.stream
 - StreamTest.java - classe de teste dos stream
 
-A seguir a descrição dos testes
+A seguir a descrição dos testes implementados:
 
 > *Retorna 'b' como primeiro caracter que não se repete
 ```
@@ -244,4 +270,4 @@ A seguir a descrição dos testes
 
 #Resposta - Questão 4
 
-O navegador fará uma requisição para o servidor, no cabecalho da solicitação será adicionando diversas informações como identificação do solicitante "User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US)...", método HTTP "GET"/ versão do protocolo "HTTP/1.1", tipo de dado esperado "Accept: text/xml,application/xml,application/xhtml", dentre outros... O servidor recebará a solicitção, realiza o processamento e devolve o resultado para o solicitante. Ao receber a resposta o navegador iniciará solicitação e carregamento dos recursos estáticos e processamento da página. Para cada recurso estático o dispositivo fará uma nova solicitação ao servidor, que o entregará o recurso solicitado e o navegador irá processar esses recursos e o finalizar disponibilizar a pagina ao usuário.
+O navegador fará uma requisição HTTP para o servidor, no cabecalho da solicitação será adicionando diversas informações como identificação do solicitante "User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US)...", método GET/ versão do protocolo "HTTP/1.1", tipo de dado esperado "Accept: text/xml,application/xml,application/xhtml", dentre outros... O servidor recebará a solicitação, realiza o processamento e devolve o resultado para o solicitante. Ao receber a resposta o navegador iniciará solicitação, carregamento dos recursos estáticos e processamento da página. Para cada recurso estático o dispositivo fará uma nova solicitação ao servidor, que o entregará o recurso, o navegador irá processá-lo e o finalizar disponibilizar a página ao usuário.
