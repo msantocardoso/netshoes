@@ -5,14 +5,14 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
-import br.com.netshoes.infrastructure.ModificadorCep;
+import br.com.netshoes.infrastructure.ModificadorCaracteres;
 
-public class ModificadorCepTest {
+public class ModificadorCaracteresTest {
 
 	@Test
 	public void deveSubstituirOsCaracteresDaEsquedaParaDireita() {
 
-		ModificadorCep lModificador = new ModificadorCep("0123456789");
+		ModificadorCaracteres lModificador = new ModificadorCaracteres("0123456789", '0');
 
 		do {
 			lModificador.getCep();

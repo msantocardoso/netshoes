@@ -7,6 +7,7 @@
 	- Log4J: framework registro de logs de execução
 	- Jersey: implementação da especificação JAX-RS (JSR-311) para criação de serviços REST
 	- hsqldb: banco de dados, persistencia em modo memória utilizado na execução do CRUD
+	- API para consulta de endereço por cep - http://postmon.com.br/
 
 #Instruções para validação - História 1
 
@@ -27,7 +28,7 @@ br.com.netshoes.model
 br.com.netshoes.infrastructure
 - ClientAdapter.java - interface do adaptador do serviço do jersey
 - JerseyClientAdapter.java - encapsula os detalhes de utilização do cliente http jersey
-- ModificadorCep.java - aplica as regras de modificação de caracteres da string cep
+- ModificadorCaracteres.java - modificador de caracteres utilizado na aplicação as regras de modificação de caracteres do cep
 
 br.com.netshoes.infrastructure.exception
 - CepInvalidoException.java
@@ -56,6 +57,9 @@ br.com.netshoes.resource
 
 - AbstracaoEnderecoResourceTest.java - abstrai a configuração da infraestrutura necessária para execução dos testes
 - EnderecoResourceTest.java - valida os cenários de teste descritos nos requisitos
+
+br.com.netshoes.util
+- ModificadorCaracteresTest.java - valida o componente de modificação de caracteres de uma string
 
 -----------------------------
 

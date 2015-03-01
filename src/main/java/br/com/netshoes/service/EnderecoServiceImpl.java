@@ -4,7 +4,7 @@ import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 
-import br.com.netshoes.infrastructure.ModificadorCep;
+import br.com.netshoes.infrastructure.ModificadorCaracteres;
 import br.com.netshoes.infrastructure.exception.CepInvalidoException;
 import br.com.netshoes.infrastructure.exception.EnderecoInvalidoException;
 import br.com.netshoes.infrastructure.exception.NenhumRegistroEncontrado;
@@ -119,7 +119,7 @@ public class EnderecoServiceImpl implements EnderecoService {
 		this.validar(cep);
 
 		Endereco lEndereco = null;
-		ModificadorCep lModificador = new ModificadorCep(cep);
+		ModificadorCaracteres lModificador = new ModificadorCaracteres(cep, '0');
 
 		String lCEP = null;
 		int lTentativa = 1;
@@ -127,6 +127,7 @@ public class EnderecoServiceImpl implements EnderecoService {
 			lCEP = lModificador.getCep();
 
 			LOGGER.info("Tentativa #" + (lTentativa++) + " - Buscando endereço relacionado ao CEP: [" + lCEP + "]...");
+			LOGGER.info("Implementação do Serviço: " + pWebServiceEndereco.getClass().getName());
 			try {
 				lEndereco = this.enderecoRepository.buscarPorCep(lCEP, pWebServiceEndereco);
 				if (lEndereco != null)
